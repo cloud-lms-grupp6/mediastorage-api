@@ -2,10 +2,11 @@ using MediaStorage.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using MediaStorage.Api.Contracts;
 using MediaStorage.Api.Services;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.Configure<BlobStorageOptions>(builder.Configuration.GetSection(BlobStorageOptions.SectionName));
 builder.Services.AddScoped<BlobStorageService>();
@@ -38,10 +39,11 @@ if (app.Environment.IsDevelopment())
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
 
-
+app.MapControllers();
 
 app.Run();

@@ -84,6 +84,12 @@ public class FilesController(MediaStorageDbContext dbContext, BlobStorageService
             return NotFound();
         }
 
+        var userId = Guid.Parse(User.FindFirst("uid")!.Value);
+        if (file.OwnerId != userId)
+        {
+            return Forbid();
+        }
+
         var response = new FileResponse
         {
             FileId = file.Id,

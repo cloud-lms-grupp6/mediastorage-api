@@ -1,3 +1,5 @@
+namespace MediaStorage.Api.Domain;
+
 public class StoredFile
 {
     public Guid Id { get; init; }
@@ -6,7 +8,7 @@ public class StoredFile
     public string BlobName { get; init; } = string.Empty;
     public string ContentType { get; init; } = string.Empty;
     public string Extension { get; init; } = string.Empty;
-    public long FileSize { get; init; }
+    public long Size { get; init; }
     public string Category { get; init; } = string.Empty;
     public DateTime CreatedAt { get; init; }
 }

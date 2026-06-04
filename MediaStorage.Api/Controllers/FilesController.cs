@@ -25,6 +25,12 @@ public class FilesController(MediaStorageDbContext dbContext, BlobStorageService
             return BadRequest("Category is required.");
         }
 
+        var role = User.FindFirst("role")?.Value;
+        if (category == "lectures" && role != "Teacher")
+        {
+            return Forbid();
+        }
+
         var fileId = Guid.NewGuid();
 
         var extension = Path.GetExtension(file.FileName);
@@ -100,6 +106,13 @@ public class FilesController(MediaStorageDbContext dbContext, BlobStorageService
         if (file is null)
         {
             return NotFound();
+        }
+
+        var userId = Guid.Parse(User.FindFirst("uid")!.Value);
+
+        if (file.OwnerId != userId)
+        {
+            return Forbid();
         }
 
         await blobStorageService.DeleteAsync(file.BlobName,cancellationToken);

@@ -3,10 +3,12 @@ using MediaStorage.Api.Infrastructure;
 using MediaStorage.Api.Services;
 using MediaStorage.Api.Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MediaStorage.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/files")]
 public class FilesController(MediaStorageDbContext dbContext, BlobStorageService blobStorageService) : ControllerBase
 {
@@ -33,10 +35,12 @@ public class FilesController(MediaStorageDbContext dbContext, BlobStorageService
 
         await blobStorageService.UploadAsync(stream, blobName, file.ContentType, cancellationToken);
 
+        var userId = Guid.Parse(User.FindFirst("uid")!.Value);
+
         var storedFile = new StoredFile
         {
             Id = fileId,
-            OwnerId = Guid.Empty, // change with JWT user id
+            OwnerId = userId,
             FileName = file.FileName,
             BlobName = blobName,
             ContentType = file.ContentType,

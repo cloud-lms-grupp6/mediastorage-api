@@ -8,10 +8,7 @@ namespace MediaStorage.Api.Controllers;
 
 [ApiController]
 [Route("api/files")]
-public class FilesController(
-    MediaStorageDbContext dbContext,
-    BlobStorageService blobStorageService)
-    : ControllerBase
+public class FilesController(MediaStorageDbContext dbContext, BlobStorageService blobStorageService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> UploadFile(IFormFile file, [FromForm] string category, CancellationToken cancellationToken)
@@ -63,5 +60,50 @@ public class FilesController(
         };
 
         return Created($"/api/files/{storedFile.Id}", response);
+    }
+
+
+
+    [HttpGet("{fileId:guid}")]
+    public async Task<IActionResult> GetFile(Guid fileId,CancellationToken cancellationToken)
+    {
+        var file = await dbContext.Files.FindAsync([fileId], cancellationToken);
+
+        if (file is null)
+        {
+            return NotFound();
+        }
+
+        var response = new FileResponse
+        {
+            FileId = file.Id,
+            FileName = file.FileName,
+            ContentType = file.ContentType,
+            Size = file.Size,
+            Category = file.Category,
+            CreatedAt = file.CreatedAt
+        };
+
+        return Ok(response);
+    }
+
+
+    [HttpDelete("{fileId:guid}")]
+    public async Task<IActionResult> DeleteFile(Guid fileId,CancellationToken cancellationToken)
+    {
+        var file = await dbContext.Files.FindAsync([fileId],cancellationToken);
+
+        if (file is null)
+        {
+            return NotFound();
+        }
+
+        await blobStorageService.DeleteAsync(file.BlobName,cancellationToken);
+
+        dbContext.Files.Remove(file);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return NoContent();
     }
 }

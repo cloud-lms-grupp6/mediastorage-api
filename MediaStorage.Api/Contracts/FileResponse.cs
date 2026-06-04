@@ -8,4 +8,5 @@ public class FileResponse
     public long Size { get; init; }
     public string Category { get; init; } = string.Empty;
     public DateTime CreatedAt { get; init; }
+    public string DownloadUrl { get; init; } = string.Empty;
 }

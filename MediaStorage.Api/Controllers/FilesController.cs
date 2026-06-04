@@ -90,6 +90,8 @@ public class FilesController(MediaStorageDbContext dbContext, BlobStorageService
             return Forbid();
         }
 
+        var downloadUrl = blobStorageService.GenerateSasUrl(file.BlobName);
+
         var response = new FileResponse
         {
             FileId = file.Id,
@@ -97,7 +99,8 @@ public class FilesController(MediaStorageDbContext dbContext, BlobStorageService
             ContentType = file.ContentType,
             Size = file.Size,
             Category = file.Category,
-            CreatedAt = file.CreatedAt
+            CreatedAt = file.CreatedAt,
+            DownloadUrl = downloadUrl
         };
 
         return Ok(response);

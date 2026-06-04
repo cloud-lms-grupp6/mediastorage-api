@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MediaStorage.Api.Domain;
 
 namespace MediaStorage.Api.Infrastructure;
 

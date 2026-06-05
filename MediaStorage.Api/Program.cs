@@ -91,6 +91,14 @@ if (app.Environment.IsDevelopment())
 
     dbContext.Database.EnsureCreated();
 }
+else
+{
+    using var scope = app.Services.CreateScope();
+
+    var dbContext = scope.ServiceProvider.GetRequiredService<MediaStorageDbContext>();
+
+    dbContext.Database.Migrate();
+}
 
 if (app.Environment.IsDevelopment())
 {
